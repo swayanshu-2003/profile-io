@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  profile       Profile?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Profile {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id])
+  firstName     String
+  lastName      String
+  phone         String?
+  address       String?
+  linkedin      String?
+  github        String?
+  portfolio     String?
+  summary       String?
+  education     Education[]
+  experiences   Experience[]
+  projects      Project[]
+  skills        Skill[]
+  certifications Certification[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Education {
+  id            String    @id @default(uuid())
+  profileId     String
+  profile       Profile   @relation(fields: [profileId], references: [id])
+  degree        String
+  institution   String
+  startDate     String
+  endDate       String?
+  description   String?
+}
+
+model Experience {
+  id            String    @id @default(uuid())
+  profileId     String
+  profile       Profile   @relation(fields: [profileId], references: [id])
+  company       String
+  position      String
+  startDate     String
+  endDate       String?
+  description   String?
+}
+
+model Project {
+  id            String    @id @default(uuid())
+  profileId     String
+  profile       Profile   @relation(fields: [profileId], references: [id])
+  name          String
+  description   String
+  technologies  String[]
+  url           String?
+}
+
+model Skill {
+  id            String    @id @default(uuid())
+  profileId     String
+  profile       Profile   @relation(fields: [profileId], references: [id])
+  name          String
+  proficiency   Int       @default(1) // 1-5 scale
+}
+
+model Certification {
+  id            String    @id @default(uuid())
+  profileId     String
+  profile       Profile   @relation(fields: [profileId], references: [id])
+  name          String
+  issuer        String
+  issueDate     String
+  expiryDate    String?
+}
